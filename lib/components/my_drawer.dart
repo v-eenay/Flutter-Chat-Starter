@@ -36,6 +36,12 @@ class MyDrawer extends StatelessWidget {
                   style: theme.textTheme.displaySmall
                       ?.copyWith(color: theme.colorScheme.primary),
                 ),
+                //display email of current user
+                Text(
+                  AuthService().getCurrentUser()?.email ?? '',
+                  style: theme.textTheme.bodyLarge
+                      ?.copyWith(color: theme.colorScheme.primary),
+                ),
               ],
             ),
 

@@ -7,19 +7,43 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final theme = Theme.of(context);
+    final borderRadius = (theme.cardTheme.shape as RoundedRectangleBorder?)
+            ?.borderRadius as BorderRadius? ??
+        BorderRadius.circular(15);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(10),
+        child: Card(
+          elevation: theme.cardTheme.elevation ?? 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius,
           ),
-          child: Row(children: [
-            //icon
-            Icon(Icons.person),
-            //username
-            Text(text),
-          ]),
-        ));
+          color: theme.cardColor,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: borderRadius,
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.person,
+                    color: theme.iconTheme.color?.withOpacity(0.7)),
+                const SizedBox(width: 20),
+                Text(
+                  text,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.textTheme.bodyLarge?.color?.withOpacity(0.9),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
