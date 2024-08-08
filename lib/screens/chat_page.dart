@@ -89,12 +89,13 @@ class _ChatPageState extends State<ChatPage> {
                 child:
                     Text('No messages yet', style: theme.textTheme.bodyLarge));
           }
-          return ListView(
-            reverse: true, // Ensures new messages appear at the bottom
+          return ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            children: snapshot.data!.docs
-                .map((doc) => _buildMessageItem(doc, senderID, theme))
-                .toList(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final doc = snapshot.data!.docs[index];
+              return _buildMessageItem(doc, senderID, theme);
+            },
           );
         });
   }
@@ -149,30 +150,35 @@ class _ChatPageState extends State<ChatPage> {
     return Container(
       padding: const EdgeInsets.all(8),
       color: theme.scaffoldBackgroundColor,
-      child: Row(children: [
-        Expanded(
-          child: TextField(
-            controller: _messageController,
-            decoration: InputDecoration(
-              hintText: 'Type a message...',
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.colorScheme.primary),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: 'Type a message...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide:
+                      BorderSide(color: theme.colorScheme.primary, width: 0.5),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide:
+                      BorderSide(color: theme.colorScheme.primary, width: 0.75),
+                ),
+                fillColor: theme.colorScheme.surface,
+                filled: true,
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: theme.colorScheme.primary, width: 2),
-              ),
-              fillColor: theme.colorScheme.surface,
-              filled: true,
+              style: theme.textTheme.bodyLarge,
             ),
-            style: theme.textTheme.bodyLarge,
           ),
-        ),
-        IconButton(
-          icon: Icon(Icons.send, color: theme.colorScheme.primary),
-          onPressed: sendMessage,
-        ),
-      ]),
+          IconButton(
+            icon: Icon(Icons.send, color: theme.colorScheme.primary),
+            onPressed: sendMessage,
+          ),
+        ],
+      ),
     );
   }
 }

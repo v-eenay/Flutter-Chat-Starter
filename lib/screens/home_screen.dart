@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sample_chat_app/components/my_appbar.dart';
+import 'package:sample_chat_app/components/user_tile.dart';
 
 import '../components/my_drawer.dart';
-import '../components/user_tile.dart';
 import '../services/auth/auth_service.dart';
 import '../services/chat/chat_service.dart';
 import 'chat_page.dart';
@@ -18,76 +19,83 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
     final currentUser = _authService.getCurrentUser();
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "H O M E",
-          style: theme.textTheme.displaySmall
-              ?.copyWith(color: theme.colorScheme.surface),
-        ),
-        centerTitle: true,
-        actions: [
-          Text(
-            currentUser?.email ?? '',
-            style: TextStyle(color: theme.colorScheme.surface),
-          ),
-          IconButton(onPressed: logout, icon: const Icon(Icons.logout))
-        ],
-      ),
+      appBar: MyAppbar(
+          title: "H O M E", userEmail: currentUser?.email, onLogout: logout),
       drawer: MyDrawer(),
-      body: Center(child: buildUserList()),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: buildUserList(),
+      ),
     );
   }
 
   Widget buildUserList() {
-    return StreamBuilder(
-        stream: _chatService.getUsers(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child: Column(
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: _chatService.getUsers(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              'Error: ${snapshot.error}',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+            ),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(),
                 SizedBox(height: 20),
                 Text("Loading Users..."),
               ],
-            ));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No users found'));
-          }
-          return ListView(
-            children: snapshot.data!
-                .map<Widget?>(
-                    (userData) => _buildUserListItem(userData, context))
-                .where((widget) => widget != null)
-                .cast<Widget>()
-                .toList(),
+            ),
           );
-        });
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No users found'));
+        }
+        return ListView(
+          children: snapshot.data!
+              .map<Widget?>(
+                (userData) => _buildUserListItem(userData, context),
+              )
+              .where((widget) => widget != null)
+              .cast<Widget>()
+              .toList(),
+        );
+      },
+    );
   }
 
   Widget? _buildUserListItem(
-      Map<String, dynamic> userData, BuildContext context) {
+    Map<String, dynamic> userData,
+    BuildContext context,
+  ) {
     final currentUserEmail = _authService.getCurrentUser()?.email;
     final userEmail = userData["email"] as String?;
 
     if (userEmail != null && userEmail != currentUserEmail) {
-      return UserTile(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ChatPage(
-              receiverEmail: userEmail,
-            );
-          }));
-        },
-        text: userEmail,
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+        child: UserTile(
+            text: userEmail,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                    receiverEmail: userEmail,
+                  ),
+                ),
+              );
+            }),
       );
     }
     return null;

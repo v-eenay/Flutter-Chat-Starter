@@ -8,8 +8,8 @@ class UserTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final borderRadius = (theme.cardTheme.shape as RoundedRectangleBorder?)
-            ?.borderRadius as BorderRadius? ??
+    final cardThemeShape = theme.cardTheme.shape as RoundedRectangleBorder?;
+    final borderRadius = cardThemeShape?.borderRadius as BorderRadius? ??
         BorderRadius.circular(15);
 
     return Padding(

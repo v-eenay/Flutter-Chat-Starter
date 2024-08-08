@@ -67,6 +67,7 @@ class LoginScreen extends StatelessWidget {
                 controller: _emailController,
                 obscureText: false,
                 keyboardType: TextInputType.emailAddress,
+                prefixIcon: Icons.email,
               ),
               const SizedBox(height: 10),
               MyPasswordField(

@@ -4,91 +4,89 @@ import '../services/auth/auth_service.dart';
 import '../screens/settings_screen.dart';
 
 class MyDrawer extends StatelessWidget {
-  //constructor
   const MyDrawer({super.key});
-  //logout function
-  void logout() {
-    //get Auth service
+
+  void logout(BuildContext context) {
     AuthService().signOut();
+    Navigator.pop(context); // Close drawer after logout
   }
 
   @override
   Widget build(BuildContext context) {
-    //initialize theme variable
     final theme = Theme.of(context);
-    //return drawer
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 600;
+
     return Drawer(
-        backgroundColor: theme.colorScheme.surface,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            //icon
-            Column(
-              children: [
-                DrawerHeader(
-                    child: Icon(
+      backgroundColor: theme.colorScheme.surface,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Header
+          Column(
+            children: [
+              DrawerHeader(
+                child: Icon(
                   Icons.chat,
-                  size: 60,
+                  size: isSmallScreen ? 50 : 60,
                   color: theme.colorScheme.primary,
-                )),
-                Text(
-                  "ChatAppVeenay",
-                  style: theme.textTheme.displaySmall
-                      ?.copyWith(color: theme.colorScheme.primary),
                 ),
-                //display email of current user
-                Text(
-                  AuthService().getCurrentUser()?.email ?? '',
-                  style: theme.textTheme.bodyLarge
-                      ?.copyWith(color: theme.colorScheme.primary),
-                ),
-              ],
-            ),
-
-            //home
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: ListTile(
-                    title: const Text("H O M E"),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    leading: const Icon(Icons.home),
-                  ),
-                ),
-
-                //settings
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: ListTile(
-                    title: const Text("S E T T I N G S"),
-                    onTap: () {
-                      //hide drawer
-                      Navigator.pop(context);
-                      //navigate to settings screen
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SettingsScreen()));
-                    },
-                    leading: const Icon(Icons.settings),
-                  ),
-                ),
-              ],
-            ),
-
-            //logout
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, bottom: 20.0),
-              child: ListTile(
-                title: const Text("L O G O U T"),
-                onTap: logout,
-                leading: const Icon(Icons.logout),
               ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 8 : 16),
+                child: Text(
+                  "ChatAppVeenay",
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Text(
+                AuthService().getCurrentUser()?.email ?? '',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+
+          // Navigation Items
+          Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.home, color: theme.colorScheme.primary),
+                title: Text("H O M E", style: theme.textTheme.bodyLarge),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: Icon(Icons.settings, color: theme.colorScheme.primary),
+                title:
+                    Text("S E T T I N G S", style: theme.textTheme.bodyLarge),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          // Logout
+          Padding(
+            padding: EdgeInsets.only(bottom: isSmallScreen ? 20 : 30),
+            child: ListTile(
+              leading: Icon(Icons.logout, color: theme.colorScheme.primary),
+              title: Text("L O G O U T", style: theme.textTheme.bodyLarge),
+              onTap: () => logout(context),
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }

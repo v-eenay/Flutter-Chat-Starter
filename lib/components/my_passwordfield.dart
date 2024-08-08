@@ -26,9 +26,15 @@ class _MyPasswordFieldState extends State<MyPasswordField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 600;
+
     return Container(
-      margin: const EdgeInsets.all(8),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: EdgeInsets.symmetric(
+        vertical: size.height * 0.01,
+        horizontal: size.width * 0.02,
+      ),
+      width: isSmallScreen ? size.width * 0.9 : size.width * 0.7,
       child: TextField(
         controller: widget.controller,
         obscureText: _obscureText,
@@ -40,26 +46,31 @@ class _MyPasswordFieldState extends State<MyPasswordField> {
           ),
           filled: true,
           fillColor: theme.colorScheme.surface,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+          border: InputBorder.none,
+          focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.04,
+            vertical: size.height * 0.015,
+          ),
+          prefixIcon: Icon(
+            Icons.lock,
+            color: theme.colorScheme.primary,
+            size: isSmallScreen ? 20 : 24,
+          ),
           suffixIcon: IconButton(
             icon: Icon(
               _obscureText ? Icons.visibility_off : Icons.visibility,
               color: theme.colorScheme.primary,
+              size: isSmallScreen ? 20 : 24,
             ),
             onPressed: _togglePasswordVisibility,
           ),
         ),
         style: theme.textTheme.bodyLarge?.copyWith(
           color: theme.colorScheme.onSurface,
+          fontSize: isSmallScreen ? 14 : 16,
         ),
       ),
     );
