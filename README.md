@@ -85,3 +85,4 @@ flutter test
 ## Contribution
 
 * For suggestions or contributions, please reach out to me via email: koiralavinay@gmail.com.
+
